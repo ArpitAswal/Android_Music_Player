@@ -1,4 +1,4 @@
-package com.example.playmusic.activities
+package com.example.playmusic.views.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent

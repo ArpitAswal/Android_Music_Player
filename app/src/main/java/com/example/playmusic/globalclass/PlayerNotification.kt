@@ -14,7 +14,7 @@ import androidx.annotation.OptIn
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import com.example.playmusic.R
-import com.example.playmusic.activities.MusicPlayerActivity
+import com.example.playmusic.views.activities.MusicPlayerActivity
 
 object PlayerNotification {
     private var shuffleMode = false
@@ -100,10 +100,11 @@ object PlayerNotification {
                     } else {
                         // If artwork data is null or empty, return a placeholder image or null
                         BitmapFactory.decodeResource(context.resources, R.drawable.headphones)
-                        // Or return null if no placeholder is desired
-                        // null
+                        // Or return null if no placeholder is desired null
+                        //null
                     }
                 }
+
             })
             .setNotificationListener(object : PlayerNotificationManager.NotificationListener {
                 override fun onNotificationPosted(

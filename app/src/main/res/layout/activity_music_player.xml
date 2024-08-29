@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/blackShade"
     android:orientation="vertical"
-    tools:context=".activities.MusicPlayerActivity">
+    tools:context=".views.activities.MusicPlayerActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

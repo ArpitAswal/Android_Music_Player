@@ -56,5 +56,7 @@ dependencies {
     implementation("androidx.media3:media3-ui:1.4.0")
     implementation("com.google.android.exoplayer:extension-media2:2.19.1") // Media session extension
     implementation("com.google.android.exoplayer:extension-mediasession:2.19.1")
+    implementation("androidx.fragment:fragment-ktx:1.8.2")
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
 
 }

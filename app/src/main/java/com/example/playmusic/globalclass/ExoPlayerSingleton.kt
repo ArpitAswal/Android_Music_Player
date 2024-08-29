@@ -5,7 +5,6 @@ import androidx.media3.exoplayer.ExoPlayer
 
 object ExoPlayerSingleton {
     private var exoPlayer: ExoPlayer? = null
-    private var last = 0L
 
     fun getInstance(context: Context): ExoPlayer {
         if (exoPlayer == null) {
@@ -19,11 +18,4 @@ object ExoPlayerSingleton {
         exoPlayer = null
     }
 
-    fun setExoSongLastDuration(pos: Long) {
-        last = pos
-    }
-
-    fun getExoSongLastDuration(): Long {
-        return last
-    }
 }

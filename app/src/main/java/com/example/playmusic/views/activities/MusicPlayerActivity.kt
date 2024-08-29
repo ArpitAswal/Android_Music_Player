@@ -1,8 +1,9 @@
-package com.example.playmusic.activities
+package com.example.playmusic.views.activities
 
 import android.annotation.SuppressLint
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
+import android.util.Log
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.TextView
@@ -101,14 +102,7 @@ class MusicPlayerActivity : AppCompatActivity() {
                 ).show()
         }
 
-        if (currentMusic != null) {
-            name = getArtistName(currentMusic!!.title)
-            albumName.text = "Album: ${currentMusic!!.album}"
-            artistName.text = name
-        }
-
         lastMusicListVersion = DeviceMusic.musicList.hashCode()
-
     }
 
     private fun handlePlayback() {
@@ -120,8 +114,8 @@ class MusicPlayerActivity : AppCompatActivity() {
             preparePlaylist(musicList, currentMusic, "handlePlay")
         } else {
             // Resume playback if the same song is selected
-            val duration = ExoPlayerSingleton.getExoSongLastDuration()
-            exoPlayer.seekTo(duration)
+            Log.d("song_duration: ", savedPlaybackPosition.toString())
+            exoPlayer.seekTo(savedPlaybackPosition)
             if (exoPlayer.isPlaying)
                 exoPlayer.playWhenReady = true
 
@@ -137,21 +131,23 @@ class MusicPlayerActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         // Refresh the playlist if the music list has been updated
-        // val previousHashCode = DeviceMusic.musicList.hashCode()
         if (exoPlayer != null && exoPlayer.isPlaying) {
             savedPlaybackPosition = exoPlayer.currentPosition
+            Log.d("song_duration: ", savedPlaybackPosition.toString())
         }
         DeviceMusic.loadMusicFiles(this)
+        // val previousHashCode = DeviceMusic.musicList.hashCode()
         if (DeviceMusic.musicList.hashCode() != lastMusicListVersion) {
             updatePlaylist()
         } else {
             handlePlayback()
         }
         exoPlayer.addListener(object : Player.Listener {
+            @OptIn(UnstableApi::class)
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 // Called when the media item changes (next/previous or manually)
-                val fadeOut = AnimationUtils.loadAnimation(playerView.context, R.anim.fade_out)
-                playerView.startAnimation(fadeOut)
+               // val fadeOut = AnimationUtils.loadAnimation(playerView.context, R.anim.fade_out)
+               // playerView.startAnimation(fadeOut)
 
                 exoPlayer.shuffleModeEnabled = PlayerNotification.getShuffleValue()
                 exoPlayer.repeatMode =
@@ -159,6 +155,8 @@ class MusicPlayerActivity : AppCompatActivity() {
                 val currentIndex = exoPlayer.currentMediaItemIndex
                 if (currentIndex != 0)
                     seekIndex = currentIndex
+                // Force refresh of the notification when the media item changes
+                PlayerNotification.playerNotificationManager?.invalidate()
                 PlayerNotification.initializePlayer(
                     this@MusicPlayerActivity,
                     exoPlayer,
@@ -228,10 +226,15 @@ class MusicPlayerActivity : AppCompatActivity() {
                         .setArtworkData(getAlbumCover(music.path))
                         .setArtist(name)
                         .build()
-                ).setMediaId(currentMusic?.id.toString())
+                ).setMediaId(music.id.toString())
                 .build()
             exoPlayer.addMediaItem(mediaItem)
 
+        }
+        if (currentMusic != null) {
+            name = getArtistName(currentMusic.title)
+            albumName.text = "Album: ${currentMusic.album}"
+            artistName.text = name
         }
         exoPlayer.prepare() // Prepare the player to start the playlist
         exoPlayer.shuffleModeEnabled = PlayerNotification.getShuffleValue()

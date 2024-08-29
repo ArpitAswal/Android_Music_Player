@@ -1,6 +1,6 @@
-package com.example.playmusic
+package com.example.playmusic.adapter
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
@@ -13,17 +13,17 @@ import android.widget.TextView
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.playmusic.activities.MusicPlayerActivity
+import com.example.playmusic.R
+import com.example.playmusic.views.activities.MusicPlayerActivity
 import com.example.playmusic.dataobject.MusicData
-import com.example.playmusic.globalclass.ExoPlayerSingleton
 
-class MainViewAdapter(
-    private val context: Activity,
+class AllSongsViewAdapter(
     private val data: List<MusicData>,
     private var mediaPlayer: MediaPlayer?,
     private var currentlyPlayingPosition: Int,
-    private val exoPlayer: ExoPlayer
-) : RecyclerView.Adapter<MainViewAdapter.ViewHolder>() {
+    private val exoPlayer: ExoPlayer,
+    private val context: Context
+) : RecyclerView.Adapter<AllSongsViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -87,9 +87,6 @@ class MainViewAdapter(
             title = itemView.findViewById(R.id.musicTitle)
             playButton = itemView.findViewById(R.id.playButton)
             itemView.setOnClickListener {
-                if (exoPlayer.isPlaying) {
-                    ExoPlayerSingleton.setExoSongLastDuration(exoPlayer.currentPosition)
-                }
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     val selectedMusic = data[position]
