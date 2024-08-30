@@ -1,6 +1,7 @@
 package com.example.playmusic.views.activities
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import android.util.Log
@@ -31,6 +32,8 @@ class MusicPlayerActivity : AppCompatActivity() {
     private lateinit var back: ImageButton
     private lateinit var shuffleBtn: ImageButton
     private lateinit var repeatBtn: ImageButton
+    private lateinit var playlistBtn: ImageButton
+    private lateinit var favBtn: ImageButton
     private lateinit var title: TextView
     private lateinit var artistName: TextView
     private lateinit var albumName: TextView
@@ -56,6 +59,8 @@ class MusicPlayerActivity : AppCompatActivity() {
         albumName = findViewById(R.id.AlbumName)
         shuffleBtn = findViewById(R.id.shuffle_BtnView)
         repeatBtn = findViewById(R.id.repeat_BtnView)
+        playlistBtn = findViewById(R.id.playlist_BtnView)
+        favBtn = findViewById(R.id.fav_BtnView)
 
         // Initialize ExoPlayer
         exoPlayer = ExoPlayerSingleton.getInstance(this)
@@ -67,6 +72,11 @@ class MusicPlayerActivity : AppCompatActivity() {
         back.setOnClickListener {
             finish()
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+        }
+
+        playlistBtn.setOnClickListener {
+            startActivity(Intent(this@MusicPlayerActivity, PlaylistActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top)
         }
 
         shuffleBtn.setOnClickListener {
@@ -114,7 +124,6 @@ class MusicPlayerActivity : AppCompatActivity() {
             preparePlaylist(musicList, currentMusic, "handlePlay")
         } else {
             // Resume playback if the same song is selected
-            Log.d("song_duration: ", savedPlaybackPosition.toString())
             exoPlayer.seekTo(savedPlaybackPosition)
             if (exoPlayer.isPlaying)
                 exoPlayer.playWhenReady = true
@@ -133,7 +142,6 @@ class MusicPlayerActivity : AppCompatActivity() {
         // Refresh the playlist if the music list has been updated
         if (exoPlayer != null && exoPlayer.isPlaying) {
             savedPlaybackPosition = exoPlayer.currentPosition
-            Log.d("song_duration: ", savedPlaybackPosition.toString())
         }
         DeviceMusic.loadMusicFiles(this)
         // val previousHashCode = DeviceMusic.musicList.hashCode()

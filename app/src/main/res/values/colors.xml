@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
+    <color name="grey">#AAA0A0</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blackShade">#FF181B2C</color>
-    <color name="colorPrimaryDark">#FF181B2C</color>
-    <color name="colorAccent">#FF181B2C</color>
     <color name="purpleAccent">#FFC35BD1</color>
     <color name="red">#EF5350</color>
 </resources>

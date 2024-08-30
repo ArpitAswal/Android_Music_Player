@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:backgroundTint="@null"
+    android:layout_gravity="top|center_vertical"
+    android:gravity="center_vertical"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="2dp">
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="12dp"
+            android:background="@drawable/square_gradient_bg">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="60dp"
+                android:maxHeight="60dp"
+                android:id="@+id/playlists_folder_ImgView"
+                android:src="@drawable/favorite"
+                android:layout_gravity="center"
+                android:elevation="12dp"
+                android:contentDescription="Playlist Folder" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/playlistTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="10dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/abhaya_libre"
+            android:maxLines="2"
+            android:layout_gravity="start|center_vertical"
+            android:gravity="start"
+            android:textStyle="bold"
+            android:text="TextView"
+            android:textSize="16sp"/>
+
+        <CheckBox
+            android:id="@+id/playlist_Checkbox"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:checked="false"
+            android:button="@null"
+            android:background="@drawable/unchecked_circle"
+            />
+
+    </LinearLayout>

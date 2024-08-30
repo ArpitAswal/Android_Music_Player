@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -58,5 +59,5 @@ dependencies {
     implementation("com.google.android.exoplayer:extension-mediasession:2.19.1")
     implementation("androidx.fragment:fragment-ktx:1.8.2")
     implementation("androidx.viewpager2:viewpager2:1.1.0")
-
+    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
 }

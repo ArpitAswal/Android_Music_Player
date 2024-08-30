@@ -112,9 +112,7 @@ class AllSongsFragment : Fragment() {
             musicList,
             mediaPlayer,
             currentlyPlayingPosition,
-            exoPlayer,
             requireView().context,
-
             )
         myRecView.adapter = myAdapter
         myRecView.layoutManager = layoutManager

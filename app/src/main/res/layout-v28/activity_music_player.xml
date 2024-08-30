@@ -11,30 +11,30 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="14dp"
-            android:layout_marginHorizontal="21dp">
+            android:layout_marginHorizontal="21dp"
+            android:layout_marginVertical="14dp">
 
             <ImageButton
                 android:id="@+id/backBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:src="@drawable/leading_icon"
-                android:contentDescription="Back" />
+                android:contentDescription="Back"
+                android:src="@drawable/leading_icon" />
 
             <TextView
                 android:id="@+id/playingText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/pattaya"
-                android:text="Playing"
                 android:layout_centerInParent="true"
+                android:fontFamily="@font/pattaya"
+                android:text="Now Playing"
                 android:textColor="@color/white"
                 android:textSize="24sp" />
         </RelativeLayout>
@@ -43,17 +43,47 @@
             android:id="@+id/player_view"
             android:layout_width="match_parent"
             android:layout_height="400dp"
-            app:use_controller="true"
             android:layout_marginHorizontal="20dp"
-            app:resize_mode="fit"/>
+            app:resize_mode="fit"
+            app:use_controller="true" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginHorizontal="20dp"
-            android:paddingVertical="10dp"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:paddingVertical="5dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/playlist_BtnView"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="playlist"
+                    android:src="@drawable/playlist"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/abhaya_libre"
+                    android:text="Playlist"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/playlist_BtnView" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
@@ -64,24 +94,24 @@
                     android:id="@+id/shuffle_BtnView"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:src="@drawable/shuffle"
                     android:background="@android:color/transparent"
                     android:contentDescription="shuffle"
+                    android:src="@drawable/shuffle"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/white" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/shuffle_BtnView"
+                    android:fontFamily="@font/abhaya_libre"
                     android:text="Shuffle"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:fontFamily="@font/abhaya_libre" />
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/shuffle_BtnView" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -94,24 +124,24 @@
                     android:id="@+id/repeat_BtnView"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:src="@drawable/repeat"
                     android:background="@android:color/transparent"
                     android:contentDescription="repeat"
+                    android:src="@drawable/repeat"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/white" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/repeat_BtnView"
+                    android:fontFamily="@font/abhaya_libre"
                     android:text="Repeat"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:fontFamily="@font/abhaya_libre" />
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/repeat_BtnView" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -124,24 +154,24 @@
                     android:id="@+id/fav_BtnView"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:src="@drawable/favorite"
                     android:background="@android:color/transparent"
                     android:contentDescription="favourite"
+                    android:src="@drawable/favorite"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/white" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/fav_BtnView"
+                    android:fontFamily="@font/abhaya_libre"
                     android:text="Favourites"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:fontFamily="@font/abhaya_libre" />
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/fav_BtnView" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -151,47 +181,49 @@
             android:id="@+id/titleView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Music Title"
-            android:maxLines="2"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="16dp"
             android:ellipsize="end"
+            android:fontFamily="@font/pattaya"
+            android:maxLines="2"
+            android:text="Music Title"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="21sp"
-            android:fontFamily="@font/pattaya"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="16dp"/>
+            android:textSize="21sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginHorizontal="18dp"
-            android:layout_marginVertical="14dp">
+            android:layout_marginVertical="14dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/ArtistName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="1dp"
                 android:layout_weight="1"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:maxLines="3"
-                android:textAlignment="textStart"
                 android:fontFamily="@font/lugrasimo"
-                android:layout_marginEnd="1dp"/>
+                android:maxLines="3"
+                android:text=""
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
             <TextView
                 android:id="@+id/AlbumName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
                 android:layout_weight="1"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:maxLines="3"
-                android:textAlignment="textEnd"
                 android:fontFamily="@font/lugrasimo"
-                android:layout_marginStart="1dp"/>
+                android:maxLines="3"
+                android:text=""
+                android:textAlignment="textEnd"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
+
 </ScrollView>

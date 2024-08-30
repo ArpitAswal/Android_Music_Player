@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.playmusic.R
@@ -21,7 +20,6 @@ class AllSongsViewAdapter(
     private val data: List<MusicData>,
     private var mediaPlayer: MediaPlayer?,
     private var currentlyPlayingPosition: Int,
-    private val exoPlayer: ExoPlayer,
     private val context: Context
 ) : RecyclerView.Adapter<AllSongsViewAdapter.ViewHolder>() {
 
