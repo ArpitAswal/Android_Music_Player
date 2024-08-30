@@ -84,7 +84,7 @@ class AllSongsFragment : Fragment() {
             // Show a message to the user that permission is required
             Toast.makeText(
                 view?.context,
-                "Permissions are necessary to display list of songs",
+                "Permissions is necessary to display list of songs",
                 Toast.LENGTH_SHORT
             ).show()
             Handler(Looper.getMainLooper()).postDelayed({

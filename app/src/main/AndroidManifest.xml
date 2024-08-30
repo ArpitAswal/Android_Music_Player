@@ -21,17 +21,18 @@
         android:theme="@style/Theme.PlayMusic"
         tools:targetApi="31">
         <activity
+            android:name=".views.activities.SelectPlaylistActivity"
+            android:exported="false" />
+        <activity
             android:name=".views.activities.PlaylistActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".views.activities.MusicPlayerActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".MainActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false"></activity>
         <activity
             android:name=".views.activities.SplashActivity"
             android:exported="true">

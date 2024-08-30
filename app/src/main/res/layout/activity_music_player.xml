@@ -155,12 +155,12 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@android:color/transparent"
+                    android:src="@drawable/favorite_white"
                     android:contentDescription="favourite"
-                    android:src="@drawable/favorite"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:tint="@color/white" />
+                    app:tint="@null" />
 
                 <TextView
                     android:layout_width="wrap_content"

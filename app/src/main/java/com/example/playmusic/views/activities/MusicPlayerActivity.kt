@@ -4,13 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
-import android.util.Log
-import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
@@ -21,6 +20,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.example.playmusic.R
 import com.example.playmusic.dataobject.MusicData
+import com.example.playmusic.globalclass.AllPlaylistExist
 import com.example.playmusic.globalclass.DeviceMusic
 import com.example.playmusic.globalclass.ExoPlayerSingleton
 import com.example.playmusic.globalclass.PlayerNotification
@@ -41,6 +41,7 @@ class MusicPlayerActivity : AppCompatActivity() {
     private var musicList: List<MusicData> = listOf()
     private var lastMusicListVersion: Int = 0
     private var seekIndex: Int = 0
+    private var currentIndex = 0
     private var savedPlaybackPosition: Long = 0
     private var currentMusic: MusicData? = null
 
@@ -75,7 +76,10 @@ class MusicPlayerActivity : AppCompatActivity() {
         }
 
         playlistBtn.setOnClickListener {
-            startActivity(Intent(this@MusicPlayerActivity, PlaylistActivity::class.java))
+            val music = musicList[exoPlayer.currentMediaItemIndex]
+            val intent = Intent(this@MusicPlayerActivity, PlaylistActivity::class.java)
+            intent.putExtra("SelectMusic", music)
+            startActivity(intent)
             overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top)
         }
 
@@ -98,20 +102,37 @@ class MusicPlayerActivity : AppCompatActivity() {
             }
             exoPlayer.repeatMode =
                 if (PlayerNotification.getRepeatMode() == 1) Player.REPEAT_MODE_OFF else if (PlayerNotification.getRepeatMode() == 2) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_ALL
-            if (PlayerNotification.getRepeatMode() == 2)
+            if (PlayerNotification.getRepeatMode() == 1)
                 Toast.makeText(
                     this@MusicPlayerActivity,
-                    "current song repeat in an endless loop",
+                    "Normal play mode",
                     Toast.LENGTH_SHORT
                 ).show()
-            else if (PlayerNotification.getRepeatMode() == 3)
+            else if (PlayerNotification.getRepeatMode() == 2)
                 Toast.makeText(
                     this@MusicPlayerActivity,
-                    "all playlist repeat in an endless loop",
+                    "Single loop mode",
+                    Toast.LENGTH_SHORT
+                ).show()
+            else
+                Toast.makeText(
+                    this@MusicPlayerActivity,
+                    "Current playlist is looped",
                     Toast.LENGTH_SHORT
                 ).show()
         }
 
+        favBtn.setOnClickListener {
+            currentIndex = exoPlayer.currentMediaItemIndex
+                if(favSong(musicList[currentIndex])) {
+                    favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_white))
+                    AllPlaylistExist.removeLikedSong(currentMusic!!)
+                } else {
+                    favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_red))
+                    AllPlaylistExist.addLikedSong(musicList[currentIndex])
+                }
+        }
+        favBtn.invalidate()
         lastMusicListVersion = DeviceMusic.musicList.hashCode()
     }
 
@@ -140,7 +161,7 @@ class MusicPlayerActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         // Refresh the playlist if the music list has been updated
-        if (exoPlayer != null && exoPlayer.isPlaying) {
+        if (exoPlayer.isPlaying) {
             savedPlaybackPosition = exoPlayer.currentPosition
         }
         DeviceMusic.loadMusicFiles(this)
@@ -150,6 +171,11 @@ class MusicPlayerActivity : AppCompatActivity() {
         } else {
             handlePlayback()
         }
+        if(favSong(currentMusic!!))
+            favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_red))
+        else
+            favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_white))
+
         exoPlayer.addListener(object : Player.Listener {
             @OptIn(UnstableApi::class)
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
@@ -160,7 +186,7 @@ class MusicPlayerActivity : AppCompatActivity() {
                 exoPlayer.shuffleModeEnabled = PlayerNotification.getShuffleValue()
                 exoPlayer.repeatMode =
                     if (PlayerNotification.getRepeatMode() == 1) Player.REPEAT_MODE_OFF else if (PlayerNotification.getRepeatMode() == 2) Player.REPEAT_MODE_ONE else Player.REPEAT_MODE_ALL
-                val currentIndex = exoPlayer.currentMediaItemIndex
+                currentIndex = exoPlayer.currentMediaItemIndex
                 if (currentIndex != 0)
                     seekIndex = currentIndex
                 // Force refresh of the notification when the media item changes
@@ -170,6 +196,11 @@ class MusicPlayerActivity : AppCompatActivity() {
                     exoPlayer,
                     musicList[currentIndex].id
                 )
+                    if(favSong(musicList[currentIndex])) {
+                        favBtn.setImageResource(R.drawable.favorite_red)
+                    } else {
+                        favBtn.setImageResource(R.drawable.favorite_white)
+                    }
                 name = getArtistName(musicList[currentIndex].title)
                 albumName.text =
                     "Album: ${exoPlayer.currentMediaItem?.mediaMetadata?.albumTitle ?: "Unknown"}"
@@ -270,5 +301,10 @@ class MusicPlayerActivity : AppCompatActivity() {
         val art = retriever.embeddedPicture
         retriever.release()
         return art
+    }
+
+    fun favSong(music: MusicData) : Boolean{
+        val list = AllPlaylistExist.getAllLiked()
+        return list.contains(music)
     }
 }

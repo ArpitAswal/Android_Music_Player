@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/playlist_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -22,28 +23,48 @@
                 android:maxWidth="60dp"
                 android:maxHeight="60dp"
                 android:id="@+id/playlists_folder_ImgView"
-                android:src="@drawable/favorite"
+                android:src="@drawable/favorite_white"
                 android:layout_gravity="center"
                 android:elevation="12dp"
                 android:contentDescription="Playlist Folder" />
 
         </FrameLayout>
 
-        <TextView
-            android:id="@+id/playlistTitle"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_marginHorizontal="10dp"
-            android:ellipsize="end"
-            android:fontFamily="@font/abhaya_libre"
-            android:maxLines="2"
-            android:layout_gravity="start|center_vertical"
-            android:gravity="start"
-            android:textStyle="bold"
-            android:text="TextView"
-            android:textSize="16sp"/>
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginHorizontal="12dp">
 
+            <TextView
+                android:id="@+id/playlistTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/abhaya_libre"
+                android:maxLines="2"
+                android:layout_gravity="start|top"
+                android:gravity="start"
+                android:textStyle="bold"
+                android:text="TextView"
+                android:textColor="@color/white"
+                android:textSize="18sp"/>
+            <TextView
+                android:id="@+id/playlistSubTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/abhaya_libre"
+                android:layout_gravity="start|bottom"
+                android:gravity="start"
+                android:text="Playlist"
+                android:textColor="@color/grey"
+                android:textStyle="bold"
+                android:textSize="15sp"/>
+        </LinearLayout>
         <CheckBox
             android:id="@+id/playlist_Checkbox"
             android:layout_width="28dp"

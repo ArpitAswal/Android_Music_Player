@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playmusic.R
 import com.example.playmusic.adapter.AddPlaylistViewAdapter
 import com.example.playmusic.adapter.AllSongsViewAdapter
+import com.example.playmusic.dataobject.MusicData
 import com.example.playmusic.dataobject.PlaylistData
 import com.example.playmusic.globalclass.AllPlaylistExist
 import com.example.playmusic.globalclass.DeviceMusic
@@ -30,13 +31,22 @@ class PlaylistActivity : AppCompatActivity() {
         myRecView = findViewById(R.id.create_playlist_recView)
         backBtn = findViewById(R.id.playlist_backBtn)
         newPlaylist = findViewById(R.id.newlist_BtnView)
+        doneBtn = findViewById(R.id.done_BtnView)
 
+        val music = intent.getParcelableExtra<MusicData>("SelectMusic")
         val drawable = newPlaylist.background as GradientDrawable
         drawable.setColor(resources.getColor(R.color.white, null))
         // Set the border (stroke) color dynamically
         drawable.setStroke(2, resources.getColor(R.color.black))
 
         backBtn.setOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_bottom)
+        }
+
+        doneBtn.setOnClickListener {
+            AllPlaylistExist.songAddTo = music!!
+            AllPlaylistExist.addSongsInLists()
             finish()
             overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_bottom)
         }
