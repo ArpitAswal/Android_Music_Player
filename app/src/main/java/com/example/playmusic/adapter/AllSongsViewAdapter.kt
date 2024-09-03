@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,11 +14,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.playmusic.R
+import com.example.playmusic.globalclass.AllPlaylistExist
 import com.example.playmusic.views.activities.MusicPlayerActivity
-import com.example.playmusic.dataobject.MusicData
+import com.example.playmusic.dataobject.DBMusicData
 
 class AllSongsViewAdapter(
-    private val data: List<MusicData>,
+    private val data: MutableList<DBMusicData>,
     private var mediaPlayer: MediaPlayer?,
     private var currentlyPlayingPosition: Int,
     private val context: Context
@@ -58,7 +60,7 @@ class AllSongsViewAdapter(
                 }
             } else {
                 mediaPlayer?.release()
-                mediaPlayer = MediaPlayer.create(context, currentData.musicUri)
+                mediaPlayer = MediaPlayer.create(context, Uri.parse(currentData.musicUri))
                 mediaPlayer?.start()
                 notifyItemChanged(currentlyPlayingPosition)
                 currentlyPlayingPosition = position
@@ -87,9 +89,8 @@ class AllSongsViewAdapter(
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    val selectedMusic = data[position]
+                    AllPlaylistExist.setSongPlayTo(data[position])
                     val intent = Intent(itemView.context, MusicPlayerActivity::class.java)
-                    intent.putExtra("MusicData", selectedMusic)
                     itemView.context.startActivity(intent)
                 }
             }

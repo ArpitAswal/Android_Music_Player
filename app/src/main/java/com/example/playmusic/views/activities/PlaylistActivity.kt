@@ -1,20 +1,22 @@
 package com.example.playmusic.views.activities
 
+import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playmusic.R
 import com.example.playmusic.adapter.AddPlaylistViewAdapter
-import com.example.playmusic.adapter.AllSongsViewAdapter
-import com.example.playmusic.dataobject.MusicData
-import com.example.playmusic.dataobject.PlaylistData
 import com.example.playmusic.globalclass.AllPlaylistExist
-import com.example.playmusic.globalclass.DeviceMusic
-
+import com.example.playmusic.dataobject.DBMusicData
+import com.example.playmusic.roomdb.PlaylistRelationship
+import com.example.playmusic.views.model.DBViewModel
+import kotlinx.coroutines.launch
 
 class PlaylistActivity : AppCompatActivity() {
     private lateinit var backBtn: ImageButton
@@ -22,7 +24,8 @@ class PlaylistActivity : AppCompatActivity() {
     private lateinit var doneBtn: Button
     private lateinit var myRecView: RecyclerView
     private lateinit var myAdapter: AddPlaylistViewAdapter
-    private lateinit var playlistList: MutableList<PlaylistData>
+    private lateinit var playlistList: MutableList<PlaylistRelationship>
+    private lateinit var dbViewModel: DBViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,28 +33,36 @@ class PlaylistActivity : AppCompatActivity() {
 
         myRecView = findViewById(R.id.create_playlist_recView)
         backBtn = findViewById(R.id.playlist_backBtn)
-        newPlaylist = findViewById(R.id.newlist_BtnView)
+        newPlaylist = findViewById(R.id.new_playlist_btn)
         doneBtn = findViewById(R.id.done_BtnView)
-
-        val music = intent.getParcelableExtra<MusicData>("SelectMusic")
         val drawable = newPlaylist.background as GradientDrawable
         drawable.setColor(resources.getColor(R.color.white, null))
         // Set the border (stroke) color dynamically
         drawable.setStroke(2, resources.getColor(R.color.black))
+        dbViewModel = ViewModelProvider(this)[DBViewModel::class.java]
 
         backBtn.setOnClickListener {
             finish()
             overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_bottom)
         }
 
-        doneBtn.setOnClickListener {
-            AllPlaylistExist.songAddTo = music!!
-            AllPlaylistExist.addSongsInLists()
-            finish()
+        newPlaylist.setOnClickListener {
+            val intent = Intent(this@PlaylistActivity, CreatePlaylistActivity::class.java)
+            startActivity(intent)
             overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_bottom)
         }
 
-        playlistList = AllPlaylistExist.getAllPlaylists()
+        doneBtn.setOnClickListener {
+            if (AllPlaylistExist.getSelectsPlaylist().isNotEmpty()) {
+                lifecycleScope.launch {
+                    dbViewModel.insertSongInMultipleList()
+                }
+                finish()
+                overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_bottom)
+            }
+        }
+
+        playlistList = AllPlaylistExist.playlistData
         // create a vertical layout manager
         val layoutManager =
             LinearLayoutManager(this@PlaylistActivity, LinearLayoutManager.VERTICAL, false)
@@ -69,6 +80,4 @@ class PlaylistActivity : AppCompatActivity() {
         finish()
         overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_bottom)
     }
-
-
 }

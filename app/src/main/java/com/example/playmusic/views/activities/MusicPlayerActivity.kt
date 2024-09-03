@@ -19,11 +19,11 @@ import androidx.media3.datasource.HttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.example.playmusic.R
-import com.example.playmusic.dataobject.MusicData
 import com.example.playmusic.globalclass.AllPlaylistExist
 import com.example.playmusic.globalclass.DeviceMusic
 import com.example.playmusic.globalclass.ExoPlayerSingleton
 import com.example.playmusic.globalclass.PlayerNotification
+import com.example.playmusic.dataobject.DBMusicData
 
 class MusicPlayerActivity : AppCompatActivity() {
 
@@ -37,21 +37,19 @@ class MusicPlayerActivity : AppCompatActivity() {
     private lateinit var title: TextView
     private lateinit var artistName: TextView
     private lateinit var albumName: TextView
-    private lateinit var name: String
-    private var musicList: List<MusicData> = listOf()
+    private var currentMusic: DBMusicData = AllPlaylistExist.getSongPlayTo()
+    private var name = ""
+    private var musicList = mutableListOf<DBMusicData>()
     private var lastMusicListVersion: Int = 0
     private var seekIndex: Int = 0
     private var currentIndex = 0
     private var savedPlaybackPosition: Long = 0
-    private var currentMusic: MusicData? = null
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_music_player)
 
-        currentMusic = intent.getParcelableExtra("MusicData")
-        name = ""
         // Initialize PlayerView from layout
         playerView = findViewById(R.id.player_view)
         back = findViewById(R.id.backBtn)
@@ -66,7 +64,6 @@ class MusicPlayerActivity : AppCompatActivity() {
         // Initialize ExoPlayer
         exoPlayer = ExoPlayerSingleton.getInstance(this)
         playerView.player = exoPlayer
-
         musicList = DeviceMusic.musicList
         seekIndex = musicList.indexOf(currentMusic)
 
@@ -76,9 +73,8 @@ class MusicPlayerActivity : AppCompatActivity() {
         }
 
         playlistBtn.setOnClickListener {
-            val music = musicList[exoPlayer.currentMediaItemIndex]
+            AllPlaylistExist.setSongAddTo(musicList[exoPlayer.currentMediaItemIndex])
             val intent = Intent(this@MusicPlayerActivity, PlaylistActivity::class.java)
-            intent.putExtra("SelectMusic", music)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top)
         }
@@ -124,20 +120,18 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         favBtn.setOnClickListener {
             currentIndex = exoPlayer.currentMediaItemIndex
-                if(favSong(musicList[currentIndex])) {
-                    favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_white))
-                    AllPlaylistExist.removeLikedSong(currentMusic!!)
-                } else {
-                    favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_red))
-                    AllPlaylistExist.addLikedSong(musicList[currentIndex])
-                }
+            if (favSong(musicList[currentIndex])) {
+                favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_white))
+            } else {
+                favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_red))
+            }
         }
         favBtn.invalidate()
         lastMusicListVersion = DeviceMusic.musicList.hashCode()
     }
 
     private fun handlePlayback() {
-        val isSameSong = exoPlayer.currentMediaItem?.mediaId == currentMusic?.id.toString()
+        val isSameSong = exoPlayer.currentMediaItem?.mediaId == currentMusic.musicId.toString()
 
         if (!isSameSong) {
             // Stop the previous song if it's different
@@ -165,13 +159,12 @@ class MusicPlayerActivity : AppCompatActivity() {
             savedPlaybackPosition = exoPlayer.currentPosition
         }
         DeviceMusic.loadMusicFiles(this)
-        // val previousHashCode = DeviceMusic.musicList.hashCode()
         if (DeviceMusic.musicList.hashCode() != lastMusicListVersion) {
             updatePlaylist()
         } else {
             handlePlayback()
         }
-        if(favSong(currentMusic!!))
+        if (favSong(currentMusic))
             favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_red))
         else
             favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_white))
@@ -180,8 +173,8 @@ class MusicPlayerActivity : AppCompatActivity() {
             @OptIn(UnstableApi::class)
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 // Called when the media item changes (next/previous or manually)
-               // val fadeOut = AnimationUtils.loadAnimation(playerView.context, R.anim.fade_out)
-               // playerView.startAnimation(fadeOut)
+                // val fadeOut = AnimationUtils.loadAnimation(playerView.context, R.anim.fade_out)
+                // playerView.startAnimation(fadeOut)
 
                 exoPlayer.shuffleModeEnabled = PlayerNotification.getShuffleValue()
                 exoPlayer.repeatMode =
@@ -194,13 +187,13 @@ class MusicPlayerActivity : AppCompatActivity() {
                 PlayerNotification.initializePlayer(
                     this@MusicPlayerActivity,
                     exoPlayer,
-                    musicList[currentIndex].id
+                    musicList[currentIndex].musicId
                 )
-                    if(favSong(musicList[currentIndex])) {
-                        favBtn.setImageResource(R.drawable.favorite_red)
-                    } else {
-                        favBtn.setImageResource(R.drawable.favorite_white)
-                    }
+                if (favSong(musicList[currentIndex])) {
+                    favBtn.setImageResource(R.drawable.favorite_red)
+                } else {
+                    favBtn.setImageResource(R.drawable.favorite_white)
+                }
                 name = getArtistName(musicList[currentIndex].title)
                 albumName.text =
                     "Album: ${exoPlayer.currentMediaItem?.mediaMetadata?.albumTitle ?: "Unknown"}"
@@ -249,8 +242,8 @@ class MusicPlayerActivity : AppCompatActivity() {
     @OptIn(UnstableApi::class)
     @SuppressLint("SetTextI18n")
     private fun preparePlaylist(
-        musicList: List<MusicData>,
-        currentMusic: MusicData?,
+        musicList: MutableList<DBMusicData>,
+        currentMusic: DBMusicData?,
         listBehaviour: String
     ) {
         exoPlayer.clearMediaItems()
@@ -265,7 +258,7 @@ class MusicPlayerActivity : AppCompatActivity() {
                         .setArtworkData(getAlbumCover(music.path))
                         .setArtist(name)
                         .build()
-                ).setMediaId(music.id.toString())
+                ).setMediaId(music.musicId.toString())
                 .build()
             exoPlayer.addMediaItem(mediaItem)
 
@@ -292,7 +285,11 @@ class MusicPlayerActivity : AppCompatActivity() {
     private fun refreshPlayerNotification() {
         PlayerNotification.playerNotificationManager?.setPlayer(null)  // Temporarily remove the player
         PlayerNotification.playerNotificationManager?.setPlayer(exoPlayer)  // Reassign the player
-        PlayerNotification.initializePlayer(this@MusicPlayerActivity, exoPlayer, currentMusic!!.id)
+        PlayerNotification.initializePlayer(
+            this@MusicPlayerActivity,
+            exoPlayer,
+            currentMusic.musicId
+        )
     }
 
     private fun getAlbumCover(path: String): ByteArray? {
@@ -303,8 +300,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         return art
     }
 
-    fun favSong(music: MusicData) : Boolean{
-        val list = AllPlaylistExist.getAllLiked()
-        return list.contains(music)
+    fun favSong(music: DBMusicData): Boolean {
+        return false
     }
 }
