@@ -1,39 +1,49 @@
 package com.example.playmusic.globalclass
 
-import com.example.playmusic.dataobject.MusicData
-import com.example.playmusic.dataobject.PlaylistData
+import com.example.playmusic.dataobject.DBMusicData
+import com.example.playmusic.roomdb.PlaylistRelationship
 
 object AllPlaylistExist {
-    private var playlistData = mutableListOf<PlaylistData>()
-    private var favListData = mutableListOf<MusicData>()
-    var indexOfLists = mutableListOf<Int>()
-    lateinit var songAddTo: MusicData
-    fun getAllPlaylists() : MutableList<PlaylistData>{
+    var playlistData = mutableListOf<PlaylistRelationship>()
+    var selectedPlaylist = mutableListOf<PlaylistRelationship>()
+    private lateinit var songAddTo: DBMusicData
+    private lateinit var songPlayTo: DBMusicData
+
+    fun getAllPlaylists(dbPlaylistData: List<PlaylistRelationship>): MutableList<PlaylistRelationship> {
         playlistData.clear()
-            playlistData.add(
-                PlaylistData(
-                    id = -1,
-                    title = "Liked Songs",
-                    image = "",
-                    isChecked = false
-                )
-            )
+
+        for (data in dbPlaylistData) {
+            playlistData.add(data)
+        }
         return playlistData
     }
 
-    fun getAllLiked() : MutableList<MusicData>{
-         return favListData
+    fun removeSelectedPlaylist(list: PlaylistRelationship) {
+        selectedPlaylist.remove(list)
     }
 
-    fun addLikedSong(music: MusicData){
-        favListData.add(music)
+    fun setSongAddTo(music: DBMusicData) {
+        songAddTo = music
     }
 
-    fun removeLikedSong(music: MusicData){
-        favListData.remove(music)
+    fun setSongPlayTo(music: DBMusicData) {
+        songPlayTo = music
     }
 
-    fun addSongsInLists() {
-        favListData.add(songAddTo)
+    fun setSelectedPlaylist(list: PlaylistRelationship) {
+        selectedPlaylist.add(list)
     }
+
+    fun getSelectsPlaylist(): MutableList<PlaylistRelationship> {
+        return selectedPlaylist
+    }
+
+    fun getSongPlayTo(): DBMusicData {
+        return songPlayTo
+    }
+
+    fun getSongAddTo(): DBMusicData {
+        return songAddTo
+    }
+
 }

@@ -1,28 +1,34 @@
 package com.example.playmusic
 
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.example.playmusic.globalclass.AllPlaylistExist
+import com.example.playmusic.roomdb.PlaylistRelationship
 import com.example.playmusic.views.fragments.AllPlaylistsFragment
 import com.example.playmusic.views.fragments.AllSongsFragment
+import com.example.playmusic.views.model.DBViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var toolbar: Toolbar
+    private lateinit var dbViewModel: DBViewModel
+    private var playlistSongsList = mutableListOf<PlaylistRelationship>()
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -50,6 +56,19 @@ class MainActivity : AppCompatActivity() {
             ContextCompat.getColor(this, R.color.white),  // Normal state color
             ContextCompat.getColor(this, R.color.purpleAccent)  // Selected state color
         )
+
+        dbViewModel = ViewModelProvider(this)[DBViewModel::class.java]
+        dbViewModel.allPlaylist.observe(this) {
+            playlistSongsList.clear()
+            GlobalScope.launch {
+                for (playlist in it) {
+                    val id = playlist.playlist.playlistId
+                    val songList = dbViewModel.getPlaylistWithSongs(id)
+                    playlistSongsList.add(songList)
+                }
+                AllPlaylistExist.getAllPlaylists(playlistSongsList)
+            }
+        }
     }
 
     // method to inflate the options menu when the user opens the menu for the first time

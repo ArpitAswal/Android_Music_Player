@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playmusic.adapter.AllSongsViewAdapter
 import com.example.playmusic.R
-import com.example.playmusic.dataobject.MusicData
+import com.example.playmusic.dataobject.DBMusicData
 import com.example.playmusic.globalclass.DeviceMusic
 import com.example.playmusic.globalclass.ExoPlayerSingleton
 import com.example.playmusic.globalclass.PlayerNotification
@@ -113,7 +113,7 @@ class AllSongsFragment : Fragment() {
             mediaPlayer,
             currentlyPlayingPosition,
             requireView().context,
-            )
+        )
         myRecView.adapter = myAdapter
         myRecView.layoutManager = layoutManager
         // Add custom divider
@@ -128,7 +128,7 @@ class AllSongsFragment : Fragment() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun sortMusicList(musicList: List<MusicData>, order: SortOrder) {
+    private fun sortMusicList(musicList: List<DBMusicData>, order: SortOrder) {
         when (order) {
             SortOrder.TITLE_ASC -> musicList.sortedBy { it.title }
             SortOrder.TITLE_DESC -> musicList.sortedByDescending { it.title }
