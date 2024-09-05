@@ -37,7 +37,7 @@ class AllPlaylistsFragment : Fragment() {
             LinearLayoutManager(requireView().context, LinearLayoutManager.VERTICAL, false)
         myAdapter = PlaylistViewAdapter(
             AllPlaylistExist.playlistData,
-            requireView().context,
+            this@AllPlaylistsFragment,
             dbViewModel
         )
         rec.adapter = myAdapter

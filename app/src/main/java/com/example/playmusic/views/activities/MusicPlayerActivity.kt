@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
@@ -24,6 +26,11 @@ import com.example.playmusic.globalclass.DeviceMusic
 import com.example.playmusic.globalclass.ExoPlayerSingleton
 import com.example.playmusic.globalclass.PlayerNotification
 import com.example.playmusic.dataobject.DBMusicData
+import com.example.playmusic.views.model.DBViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MusicPlayerActivity : AppCompatActivity() {
 
@@ -37,6 +44,7 @@ class MusicPlayerActivity : AppCompatActivity() {
     private lateinit var title: TextView
     private lateinit var artistName: TextView
     private lateinit var albumName: TextView
+    private lateinit var dbViewModel: DBViewModel
     private var currentMusic: DBMusicData = AllPlaylistExist.getSongPlayTo()
     private var name = ""
     private var musicList = mutableListOf<DBMusicData>()
@@ -61,6 +69,7 @@ class MusicPlayerActivity : AppCompatActivity() {
         playlistBtn = findViewById(R.id.playlist_BtnView)
         favBtn = findViewById(R.id.fav_BtnView)
 
+        dbViewModel = ViewModelProvider(this)[DBViewModel::class.java]
         // Initialize ExoPlayer
         exoPlayer = ExoPlayerSingleton.getInstance(this)
         playerView.player = exoPlayer
@@ -120,16 +129,40 @@ class MusicPlayerActivity : AppCompatActivity() {
 
         favBtn.setOnClickListener {
             currentIndex = exoPlayer.currentMediaItemIndex
-            if (favSong(musicList[currentIndex])) {
+            if (favSongs(musicList[currentIndex])) {
                 favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_white))
+                removeSong(musicList[currentIndex])
             } else {
                 favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_red))
+                addSong(musicList[currentIndex])
             }
         }
         favBtn.invalidate()
         lastMusicListVersion = DeviceMusic.musicList.hashCode()
     }
 
+    private fun favSongs(music: DBMusicData): Boolean {
+        for (song in AllPlaylistExist.likedSongsList) {
+            if (song.musicId == music.musicId)
+                return true
+        }
+        return false
+    }
+
+    private fun removeSong(music: DBMusicData) {
+        lifecycleScope.launch {
+            dbViewModel.deleteSongFromPlaylist(-1, music.musicId)
+        }
+    }
+
+    private fun addSong(music: DBMusicData) {
+       lifecycleScope.launch {
+           music.playlistId = -1
+           dbViewModel.insertSong(music)
+       }
+    }
+
+    @SuppressLint("SetTextI18n")
     private fun handlePlayback() {
         val isSameSong = exoPlayer.currentMediaItem?.mediaId == currentMusic.musicId.toString()
 
@@ -142,7 +175,9 @@ class MusicPlayerActivity : AppCompatActivity() {
             exoPlayer.seekTo(savedPlaybackPosition)
             if (exoPlayer.isPlaying)
                 exoPlayer.playWhenReady = true
-
+            name = getArtistName(currentMusic.title)
+            albumName.text = "Album: ${currentMusic.album}"
+            artistName.text = name
         }
     }
 
@@ -164,12 +199,13 @@ class MusicPlayerActivity : AppCompatActivity() {
         } else {
             handlePlayback()
         }
-        if (favSong(currentMusic))
+        if (favSongs(currentMusic))
             favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_red))
         else
             favBtn.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.favorite_white))
 
         exoPlayer.addListener(object : Player.Listener {
+            @SuppressLint("SetTextI18n")
             @OptIn(UnstableApi::class)
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 // Called when the media item changes (next/previous or manually)
@@ -189,7 +225,7 @@ class MusicPlayerActivity : AppCompatActivity() {
                     exoPlayer,
                     musicList[currentIndex].musicId
                 )
-                if (favSong(musicList[currentIndex])) {
+                if (favSongs(musicList[currentIndex])) {
                     favBtn.setImageResource(R.drawable.favorite_red)
                 } else {
                     favBtn.setImageResource(R.drawable.favorite_white)
@@ -300,7 +336,4 @@ class MusicPlayerActivity : AppCompatActivity() {
         return art
     }
 
-    fun favSong(music: DBMusicData): Boolean {
-        return false
-    }
 }

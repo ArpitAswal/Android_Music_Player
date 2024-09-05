@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "music_data")
 data class DBMusicData(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) var id: Long,
     @ColumnInfo(name = "musicId") val musicId: Long,
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "artist") val artist: String,

@@ -40,10 +40,10 @@ class CreatePlaylistActivity : AppCompatActivity() {
                 dbViewModel.insertSong(music)
                 finish()
                 // Call finish() in SecondActivity from ThirdActivity
-                val intent = Intent(this@CreatePlaylistActivity, PlaylistActivity::class.java)
+                val intent = Intent(this@CreatePlaylistActivity, MusicPlayerActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 startActivity(intent)
-                overridePendingTransition(R.anim.slide_out_top, R.anim.slide_in_bottom)
+                overridePendingTransition(R.anim.slide_in_bottom, R.anim.slide_out_top)
             }
         }
 

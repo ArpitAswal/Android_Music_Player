@@ -29,6 +29,10 @@ class DBViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    suspend fun deleteSongFromPlaylist(playlistId: Long, musicId: Long) {
+        dao.deleteSongFromPlaylist(playlistId, musicId)
+    }
+
     suspend fun getPlaylistWithSongs(id: Long) = withContext(Dispatchers.IO) {
         dao.getPlaylistWithSong(id)
     }
@@ -37,16 +41,27 @@ class DBViewModel(application: Application) : AndroidViewModel(application) {
         dao.insertPlaylist(list)
     }
 
-    suspend fun insertSong(song: DBMusicData) = viewModelScope.launch {
-        dao.insertSong(song)
+    suspend fun insertSong(song: DBMusicData) {
+        val isAlreadyInPlaylist = dao.isSongInPlaylist(song.musicId, song.playlistId) > 0
+
+        if (!isAlreadyInPlaylist) {
+            dao.insertSong(song)
+        }
     }
 
     suspend fun insertSongInMultipleList() = viewModelScope.launch {
         val songAddTo: DBMusicData = AllPlaylistExist.getSongAddTo()
-        for (list in AllPlaylistExist.getSelectsPlaylist()) {
+        for (list in AllPlaylistExist.getAllPlaylistsIds()) {
             val id = list.playlist.playlistId
             songAddTo.playlistId = id
             dao.insertSong(songAddTo)
+        }
+    }
+
+    suspend fun removeSongInMultipleList() = viewModelScope.launch {
+        val songRemoveTo = AllPlaylistExist.getSongAddTo()
+        for (list in AllPlaylistExist.getPlaylistRemoveIds()) {
+            dao.deleteSongFromPlaylist(list.playlist.playlistId, songRemoveTo.musicId)
         }
     }
 

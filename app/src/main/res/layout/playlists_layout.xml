@@ -21,8 +21,8 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="60dp"
-            android:maxHeight="60dp"
+            android:maxWidth="54dp"
+            android:maxHeight="54dp"
             android:id="@+id/playlists_folder_ImgView"
             android:src="@drawable/favorite_white"
             android:layout_gravity="center"
