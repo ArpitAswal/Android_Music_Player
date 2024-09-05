@@ -11,6 +11,6 @@ data class PlaylistRelationship(
         parentColumn = "playlistId",
         entityColumn = "playlistId"
     )
-    val songs: List<DBMusicData>
+    val songs: MutableList<DBMusicData>
 )
 

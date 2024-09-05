@@ -7,8 +7,8 @@
         android:endColor="#D8CACA"
         android:angle="315"/>
     <size
-        android:width="66dp"
-        android:height="66dp"/>
+        android:width="60dp"
+        android:height="60dp"/>
     <stroke
         android:width="1dp"
         android:color="@android:color/black" />

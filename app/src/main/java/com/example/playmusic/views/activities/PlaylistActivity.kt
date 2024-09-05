@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playmusic.R
 import com.example.playmusic.adapter.AddPlaylistViewAdapter
 import com.example.playmusic.globalclass.AllPlaylistExist
-import com.example.playmusic.dataobject.DBMusicData
 import com.example.playmusic.roomdb.PlaylistRelationship
 import com.example.playmusic.views.model.DBViewModel
 import kotlinx.coroutines.launch
@@ -40,6 +39,8 @@ class PlaylistActivity : AppCompatActivity() {
         // Set the border (stroke) color dynamically
         drawable.setStroke(2, resources.getColor(R.color.black))
         dbViewModel = ViewModelProvider(this)[DBViewModel::class.java]
+        AllPlaylistExist.playlistsIds.clear()
+        AllPlaylistExist.playlistsRemoveIds.clear()
 
         backBtn.setOnClickListener {
             finish()
@@ -53,13 +54,18 @@ class PlaylistActivity : AppCompatActivity() {
         }
 
         doneBtn.setOnClickListener {
-            if (AllPlaylistExist.getSelectsPlaylist().isNotEmpty()) {
+            if (AllPlaylistExist.getAllPlaylistsIds().isNotEmpty()) {
                 lifecycleScope.launch {
                     dbViewModel.insertSongInMultipleList()
                 }
-                finish()
-                overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_bottom)
             }
+            if (AllPlaylistExist.getPlaylistRemoveIds().isNotEmpty()) {
+                lifecycleScope.launch {
+                    dbViewModel.removeSongInMultipleList()
+                }
+            }
+            finish()
+            overridePendingTransition(R.anim.slide_in_top, R.anim.slide_out_bottom)
         }
 
         playlistList = AllPlaylistExist.playlistData

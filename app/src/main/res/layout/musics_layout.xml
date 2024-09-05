@@ -1,51 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="10dp"
-    android:padding="4dp"
     android:layout_marginBottom="2dp"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:padding="4dp">
 
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/circle_gradient_bg">
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/circle_gradient_bg">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/musicImage"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_gravity="center"
-                android:src="@drawable/headphones"
-                android:contentDescription="Listen" />
-            </FrameLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/musicImage"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:contentDescription="Listen"
+            android:src="@drawable/headphones" />
+    </FrameLayout>
 
-            <TextView
-                android:id="@+id/musicTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginHorizontal="12dp"
-                android:ellipsize="end"
-                android:fontFamily="@font/abhaya_libre"
-                android:maxLines="3"
-                android:layout_gravity="center"
-                android:gravity="start"
-                android:textColor="@color/white"
-                android:text="TextView" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1">
 
-        <ImageButton
-            android:id="@+id/playButton"
+        <TextView
+        android:id="@+id/musicTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginHorizontal="12dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/abhaya_libre"
+        android:gravity="start"
+        android:maxLines="3"
+        android:text="TextView"
+        android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/musicSubTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            app:srcCompat="@drawable/play_icon"
-            android:contentDescription="Play" />
+            android:layout_gravity="start"
+            android:layout_marginHorizontal="12dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/abhaya_libre"
+            android:gravity="start"
+            android:maxLines="2"
+            android:visibility="gone"
+            android:text="TextView"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/playButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:contentDescription="Play"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/play_icon" />
 
 </LinearLayout>

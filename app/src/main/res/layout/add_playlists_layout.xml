@@ -24,8 +24,8 @@
             android:layout_gravity="center"
             android:contentDescription="Playlist Folder"
             android:elevation="12dp"
-            android:maxWidth="60dp"
-            android:maxHeight="60dp"
+            android:maxWidth="54dp"
+            android:maxHeight="54dp"
             android:src="@drawable/favorite_white" />
 
     </FrameLayout>

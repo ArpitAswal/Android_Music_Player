@@ -45,17 +45,24 @@ class AddPlaylistViewAdapter(
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: PlaylistRelationship) {
-            folderChecked.isChecked = item.playlist.playlistChecked
-
+            for (song in item.songs) {
+                if (song.musicId == AllPlaylistExist.getSongAddTo().musicId) {
+                    folderChecked.isChecked = true
+                    folderChecked.setBackgroundResource(R.drawable.checked_circle)
+                } else
+                    folderChecked.isChecked = false
+            }
             // Handle click or update event
             folderChecked.setOnCheckedChangeListener { _, isChecked ->
                 // Update the item's checked state
                 if (isChecked) {
                     folderChecked.setBackgroundResource(R.drawable.checked_circle)
-                    AllPlaylistExist.setSelectedPlaylist(item)
+                    AllPlaylistExist.addPlaylistId(item)
+                    AllPlaylistExist.removePlaylistRemoveIds(item)
                 } else {
                     folderChecked.setBackgroundResource(R.drawable.unchecked_circle)
-                    AllPlaylistExist.removeSelectedPlaylist(item)
+                    AllPlaylistExist.removePlaylistId(item)
+                    AllPlaylistExist.addPlaylistRemoveIds(item)
                 }// Optionally, update the UI if needed
             }
         }
@@ -68,14 +75,13 @@ class AddPlaylistViewAdapter(
             folderImage = itemView.findViewById(R.id.add_playlists_folder_ImgView)
             folderName = itemView.findViewById(R.id.add_playlistTitle)
             folderChecked = itemView.findViewById(R.id.add_playlist_Checkbox)
-            AllPlaylistExist.selectedPlaylist.clear()
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    folderChecked.isChecked = !folderChecked.isChecked
+                    val bool = folderChecked.isChecked
+                    folderChecked.isChecked = !bool
                 }
             }
         }
     }
-
 }

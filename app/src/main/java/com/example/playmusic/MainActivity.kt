@@ -1,6 +1,8 @@
 package com.example.playmusic
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -24,9 +26,12 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
+    private var backPressedOnce = false
     private lateinit var toolbar: Toolbar
     private lateinit var dbViewModel: DBViewModel
     private var playlistSongsList = mutableListOf<PlaylistRelationship>()
+    private val backPressHandler = Handler(Looper.getMainLooper())
+    private val backPressRunnable = Runnable { backPressedOnce = false }
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +76,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        if (backPressedOnce) {
+            super.onBackPressed()
+            return
+        }
+
+        this.backPressedOnce = true
+        Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show()
+
+        // Reset the backPressedOnce flag after 3 seconds
+        backPressHandler.postDelayed(backPressRunnable, 3000)
+    }
+
     // method to inflate the options menu when the user opens the menu for the first time
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
@@ -101,6 +119,7 @@ class ViewPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activ
         }
     }
 }
+
 
 
 

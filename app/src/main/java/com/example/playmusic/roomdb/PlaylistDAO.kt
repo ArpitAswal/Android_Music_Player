@@ -21,6 +21,10 @@ interface PlaylistDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSong(song: DBMusicData)
 
+    //This method will return the count of songs that match both the musicId and playlistId. If the count is greater than 0, the song is already in the playlist.
+    @Query("SELECT COUNT(*) FROM music_data WHERE musicId = :musicId AND playlistId = :playlistId")
+    suspend fun isSongInPlaylist(musicId: Long, playlistId: Long): Int
+
     // Get all playlists with their songs, sorted by title
     @Transaction
     @Query("SELECT * FROM PlayListTable ORDER BY playlistName ASC")
