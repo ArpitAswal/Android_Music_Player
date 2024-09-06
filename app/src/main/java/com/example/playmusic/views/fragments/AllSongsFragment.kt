@@ -44,11 +44,6 @@ class AllSongsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_all_songs, container, false)
     }
 
-    fun newInstance(): AllSongsFragment? {
-        return AllSongsFragment()
-    }
-
-
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onStart() {
         super.onStart()
