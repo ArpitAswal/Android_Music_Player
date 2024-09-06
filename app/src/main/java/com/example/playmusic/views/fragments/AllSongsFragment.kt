@@ -20,8 +20,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playmusic.adapter.AllSongsViewAdapter
 import com.example.playmusic.R
+import com.example.playmusic.adapter.AllSongsViewAdapter
 import com.example.playmusic.dataobject.DBMusicData
 import com.example.playmusic.globalclass.DeviceMusic
 import com.example.playmusic.globalclass.ExoPlayerSingleton
@@ -32,6 +32,7 @@ class AllSongsFragment : Fragment() {
     private lateinit var myRecView: RecyclerView
     private lateinit var myAdapter: AllSongsViewAdapter
     private lateinit var exoPlayer: ExoPlayer
+    private var musicList: MutableList<DBMusicData> = mutableListOf()
     private var mediaPlayer: MediaPlayer? = null
     private var currentlyPlayingPosition: Int = -1
 
@@ -43,11 +44,15 @@ class AllSongsFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_all_songs, container, false)
     }
 
+    fun newInstance(): AllSongsFragment? {
+        return AllSongsFragment()
+    }
+
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onStart() {
         super.onStart()
         requestPermissions()
-
     }
 
     override fun onDestroy() {
@@ -100,9 +105,8 @@ class AllSongsFragment : Fragment() {
         exoPlayer = ExoPlayerSingleton.getInstance(view.context)
     }
 
-
     private fun setupRecyclerView() {
-        val musicList = DeviceMusic.musicList
+        musicList = DeviceMusic.musicList
 
         // create a vertical layout manager
         val layoutManager =
@@ -128,6 +132,29 @@ class AllSongsFragment : Fragment() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
+    fun filter(text: String, b: Boolean) {
+        var customList = musicList.toMutableList()
+        if (customList.isEmpty()) {
+            view?.let {
+                Toast.makeText(it.context, "Music list not loaded yet.", Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
+
+        customList = customList.filter {
+            it.title.contains(text, ignoreCase = true)
+        }.toMutableList()
+
+        myAdapter.updateData(customList)
+
+        if (b && customList.isEmpty()) {
+            view?.let {
+                Toast.makeText(it.context, "No Data Found..", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
     private fun sortMusicList(musicList: List<DBMusicData>, order: SortOrder) {
         when (order) {
             SortOrder.TITLE_ASC -> musicList.sortedBy { it.title }
@@ -137,6 +164,7 @@ class AllSongsFragment : Fragment() {
         }
         myAdapter.notifyDataSetChanged()
     }
+
 }
 
 enum class SortOrder {

@@ -20,7 +20,7 @@ import android.content.Intent
 import com.example.playmusic.views.fragments.AllPlaylistsFragment
 
 class PlaylistViewAdapter(
-    private val playList: MutableList<PlaylistRelationship>,
+    private var playList: MutableList<PlaylistRelationship>,
     private val frag: AllPlaylistsFragment,
     private val dbViewModel: DBViewModel
 ) : RecyclerView.Adapter<PlaylistViewAdapter.ViewHolder>() {
@@ -55,6 +55,12 @@ class PlaylistViewAdapter(
                 dbViewModel.deletePlaylist(currentData.playlist)
             }
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(customList: MutableList<PlaylistRelationship>) {
+        playList = customList
+        notifyDataSetChanged()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

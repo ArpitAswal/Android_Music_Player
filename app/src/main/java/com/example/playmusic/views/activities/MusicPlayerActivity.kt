@@ -27,9 +27,6 @@ import com.example.playmusic.globalclass.ExoPlayerSingleton
 import com.example.playmusic.globalclass.PlayerNotification
 import com.example.playmusic.dataobject.DBMusicData
 import com.example.playmusic.views.model.DBViewModel
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class MusicPlayerActivity : AppCompatActivity() {

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -54,5 +55,28 @@ class AllPlaylistsFragment : Fragment() {
                 myAdapter.notifyDataSetChanged()
             }
         })
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun playlistFilter(text: String, b: Boolean) {
+        var customList = AllPlaylistExist.playlistData.toMutableList()
+        if (customList.isEmpty()) {
+            view?.let {
+                Toast.makeText(it.context, "Playlists not loaded yet.", Toast.LENGTH_SHORT).show()
+            }
+            return
+        }
+
+        customList = customList.filter {
+            it.playlist.playlistName!!.contains(text, ignoreCase = true)
+        }.toMutableList()
+
+        myAdapter.updateData(customList)
+
+        if (b && customList.isEmpty()) {
+            view?.let {
+                Toast.makeText(it.context, "No Data Found..", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

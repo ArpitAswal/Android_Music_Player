@@ -3,10 +3,14 @@ package com.example.playmusic
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.SparseArray
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -24,6 +28,7 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+
 class MainActivity : AppCompatActivity() {
 
     private var backPressedOnce = false
@@ -32,6 +37,10 @@ class MainActivity : AppCompatActivity() {
     private var playlistSongsList = mutableListOf<PlaylistRelationship>()
     private val backPressHandler = Handler(Looper.getMainLooper())
     private val backPressRunnable = Runnable { backPressedOnce = false }
+    private lateinit var viewPager: ViewPager2
+    private lateinit var adapter: ViewPagerAdapter
+    private lateinit var searchView: SearchView
+    private lateinit var fragment: Fragment
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,10 +52,18 @@ class MainActivity : AppCompatActivity() {
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
 
         val tabLayout: TabLayout = findViewById(R.id.tabLayout)
-        val viewPager: ViewPager2 = findViewById(R.id.viewPager)
+        viewPager = findViewById(R.id.viewPager)
 
-        val adapter = ViewPagerAdapter(this)
+        adapter = ViewPagerAdapter(this)
         viewPager.adapter = adapter
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+                // Get the fragment at the selected position
+                fragment = getFragmentAtPosition(position)!!
+            }
+        })
 
         // Setup TabLayout with ViewPager2
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
@@ -76,8 +93,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Retrieve the fragment instance from the adapter
+    private fun getFragmentAtPosition(position: Int): Fragment? {
+        return adapter.getFragmentAt(position)
+    }
+
     override fun onBackPressed() {
-        if (backPressedOnce) {
+        if (!searchView.isIconified) {
+            searchView.onActionViewCollapsed();
+        } else if (backPressedOnce) {
             super.onBackPressed()
             return
         }
@@ -92,33 +116,85 @@ class MainActivity : AppCompatActivity() {
     // method to inflate the options menu when the user opens the menu for the first time
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
+        // below line is to get our menu item.
+        val searchItem: MenuItem = menu.findItem(R.id.search)
 
-    // methods to control the operations that will
-    // happen when user clicks on the action buttons
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.search -> Toast.makeText(this, "Search Clicked", Toast.LENGTH_SHORT).show()
-        }
-        return super.onOptionsItemSelected(item)
+        // getting search view of our item.
+        searchView = searchItem.actionView as SearchView
+
+        // Change search text color
+        val searchTextView =
+            searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+        searchTextView.setTextColor(ContextCompat.getColor(this, R.color.white))  // Set text color
+        searchTextView.setHintTextColor(
+            ContextCompat.getColor(
+                this,
+                R.color.grey
+            )
+        )  // Set hint color
+        searchTextView.hint = "Search..."
+
+        searchTextView.setBackgroundColor(
+            ContextCompat.getColor(
+                this,
+                android.R.color.transparent
+            )
+        )
+
+        // Change close icon color
+        val closeIcon = searchView.findViewById<ImageView>(androidx.appcompat.R.id.search_close_btn)
+        closeIcon.setColorFilter(ContextCompat.getColor(this, R.color.white))
+
+        // below line is to call set on query text listener method.
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
+            android.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (fragment is AllSongsFragment) {
+                    // calling a method to filter our recycler view.
+                    (fragment as AllSongsFragment).filter(query.toString(), true)
+                } else (fragment as? AllPlaylistsFragment)?.playlistFilter(query.toString(), true)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                // inside on query text change method we are
+                // Check if the fragment is an instance of AllSongsFragment
+                if (fragment is AllSongsFragment) {
+                    // calling a method to filter our recycler view.
+                    (fragment as AllSongsFragment).filter(newText, false)
+                } else (fragment as? AllPlaylistsFragment)?.playlistFilter(newText, false)
+                return true
+            }
+        })
+        return super.onCreateOptionsMenu(menu);
     }
 }
 
 class ViewPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
 
+    private val registeredFragments = SparseArray<Fragment>()
     override fun getItemCount(): Int {
         return 2 // Number of tabs
     }
 
     override fun createFragment(position: Int): Fragment {
-        return when (position) {
-            0 -> AllSongsFragment()
-            1 -> AllPlaylistsFragment()
-            else -> throw IllegalStateException("Unexpected position $position")
+        var fragment: Fragment? = null
+        when (position) {
+            0 -> fragment = AllSongsFragment()
+            1 -> fragment = AllPlaylistsFragment()
         }
+
+        // Store fragment instance
+        registeredFragments.put(position, fragment)
+        return fragment!!
+    }
+
+    // Method to retrieve fragment by position
+    fun getFragmentAt(position: Int): Fragment? {
+        return registeredFragments[position]
     }
 }
+
 
 
 
